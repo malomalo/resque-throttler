@@ -11,8 +11,6 @@ require 'resque/throttler'
 require "minitest/autorun"
 require 'minitest/unit'
 require 'minitest/reporters'
-require 'faker'
-require 'webmock/minitest'
 require "mocha"
 require "mocha/mini_test"
 require 'active_support/testing/time_helpers'

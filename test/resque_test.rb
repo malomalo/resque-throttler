@@ -63,9 +63,9 @@ class ResqueTest < Minitest::Test
     Resque.redis.expects(:del).with("throttler:jobs:1").once
     
     travel_to Time.now do
-      Resque.redis.expects(:hmget).with("throttler:jobs:1", "ended_at").returns((Time.now - 10).to_i)
-      Resque.redis.expects(:hmget).with("throttler:jobs:2", "ended_at").returns((Time.now - 3).to_i)
-      Resque.redis.expects(:hmget).with("throttler:jobs:3", "ended_at").returns(nil)
+      Resque.redis.expects(:hmget).with("throttler:jobs:1", "ended_at").returns([(Time.now - 10).to_i])
+      Resque.redis.expects(:hmget).with("throttler:jobs:2", "ended_at").returns([(Time.now - 3).to_i])
+      Resque.redis.expects(:hmget).with("throttler:jobs:3", "ended_at").returns([nil])
     
       Resque.gc_rate_limit_data_for_queue('myqueue')
     end

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "resque-throttler"
-  s.version     = '0.1.0'
+  s.version     = '0.1.1'
   s.licenses    = ['MIT']
   s.authors     = ["Jon Bracy"]
   s.email       = ["jonbracy@gmail.com"]
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   #s.add_development_dependency 'rdoc'
   #s.add_development_dependency 'sdoc'
   s.add_development_dependency 'bundler'
+  s.add_development_dependency 'activesupport'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'minitest-reporters'
   s.add_development_dependency 'mocha'

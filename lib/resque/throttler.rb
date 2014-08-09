@@ -50,7 +50,7 @@ module Resque::Plugins
       uuids = redis.smembers(queue_key)
     
       uuids.each do |uuid|
-        job_ended_at = redis.hmget("throttler:jobs:#{uuid}", "ended_at")
+        job_ended_at = redis.hmget("throttler:jobs:#{uuid}", "ended_at")[0]
         if job_ended_at && Time.at(job_ended_at.to_i) < Time.now - limit[:per]
           redis.srem(queue_key, uuid)
           redis.del("throttler:jobs:#{uuid}")
