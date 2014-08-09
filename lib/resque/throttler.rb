@@ -31,7 +31,7 @@ module Resque::Plugins
     end
   
     def queue_rate_limited?(queue)
-      @rate_limits[queue.to_s]
+      !!@rate_limits[queue.to_s]
     end
   
     def queue_at_or_over_rate_limit?(queue)
@@ -65,16 +65,23 @@ Resque.extend(Resque::Plugins::Throttler)
 
 class Resque::Job
   
+  def initialize_with_throttler(queue, payload)
+    @throttled = Resque.queue_rate_limited?(queue)
+    @throttler_uuid = SecureRandom.uuid
+    initialize_without_throttler(queue, payload)
+  end
+  alias_method :initialize_without_throttler, :initialize
+  alias_method :initialize, :initialize_with_throttler
+  
   def perform_with_throttler
-    if Resque.queue_rate_limited?(self.queue)
-      uuid = SecureRandom.uuid
+    if @throttled
       begin
         # TODO this needs to be wrapped in a transcation
-        redis.hmset("throttler:jobs:#{uuid}", "started_at", Time.now.to_i)
-        redis.sadd("throttler:#{queue}_uuids", uuid)
+        redis.hmset("throttler:jobs:#{@throttler_uuid}", "started_at", Time.now.to_i)
+        redis.sadd("throttler:#{queue}_uuids", @throttler_uuid)
         perform_without_throttler
       ensure
-        redis.hmset("throttler:jobs:#{uuid}", "ended_at", Time.now.to_i)
+        redis.hmset("throttler:jobs:#{@throttler_uuid}", "ended_at", Time.now.to_i)
       end
     else
       perform_without_throttler
@@ -82,5 +89,16 @@ class Resque::Job
   end
   alias_method :perform_without_throttler, :perform
   alias_method :perform, :perform_with_throttler
+  
+  # This is added for when there is a dirty exit
+  # TODO: testme
+  def fail_with_throttler(exception)
+    if @throttled
+      redis.hmset("throttler:jobs:#{@throttler_uuid}", "ended_at", Time.now.to_i)
+    end
+    fail_without_throttler(exception)
+  end
+  alias_method :fail_without_throttler, :fail
+  alias_method :fail, :fail_with_throttler
   
 end
