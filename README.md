@@ -1,4 +1,4 @@
-Resque Throttler
+Resque Throttler [![Circle CI](https://circleci.com/gh/malomalo/resque-throttler.svg?style=svg)](https://circleci.com/gh/malomalo/resque-throttler)
 ================
 
 Resque Throttler allows you to throttle the rate at which jobs are performed
