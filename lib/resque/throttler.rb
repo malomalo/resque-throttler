@@ -76,9 +76,10 @@ class Resque::Job
   def perform_with_throttler
     if @throttled
       begin
-        # TODO this needs to be wrapped in a transcation
-        redis.hmset("throttler:jobs:#{@throttler_uuid}", "started_at", Time.now.to_i)
-        redis.sadd("throttler:#{queue}_uuids", @throttler_uuid)
+        redis.multi do
+          redis.hmset("throttler:jobs:#{@throttler_uuid}", "started_at", Time.now.to_i)
+          redis.sadd("throttler:#{queue}_uuids", @throttler_uuid)
+        end
         perform_without_throttler
       ensure
         redis.hmset("throttler:jobs:#{@throttler_uuid}", "ended_at", Time.now.to_i)
