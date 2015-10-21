@@ -17,7 +17,7 @@ require 'resque/throttler'
 Or in a Gemfile:
 
 ```ruby
-require 'resque-throttler', :require => 'resque/throttler'
+gem 'resque-throttler', :require => 'resque/throttler'
 ```
 
 Usage
