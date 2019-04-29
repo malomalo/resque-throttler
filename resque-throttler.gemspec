@@ -14,8 +14,8 @@ Gem::Specification.new do |s|
   s.extensions    = []
   s.require_paths = ["lib"]
   #s.extra_rdoc_files = ["LICENSE", "README.md"]
-  
-  # Developoment 
+
+  # Developoment
   s.add_development_dependency 'rake'
   #s.add_development_dependency 'rdoc'
   #s.add_development_dependency 'sdoc'
@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   #s.add_development_dependency 'sdoc-templates-42floors'
 
   # Runtime
-  s.add_runtime_dependency 'resque', '~> 1.25'
+  s.add_runtime_dependency 'resque'
 end
