@@ -40,7 +40,7 @@ Similar Resque Plugins
   Throttler you can achieve the same functionarliy with the following rate limit:
 
   ```ruby
-  Resque.rate_limit(:my_queue, :at => 10, :per => 0)
+  Resque.rate_limit(:my_queue, :at => 1, :per => 0)
   ```
 
 * [resque-throttle](https://github.com/scotttam/resque-throttle)
