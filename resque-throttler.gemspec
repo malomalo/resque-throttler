@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "resque-throttler"
-  s.version     = '0.1.5'
+  s.version     = '0.2.0'
   s.licenses    = ['MIT']
   s.authors     = ["Jon Bracy"]
   s.email       = ["jonbracy@gmail.com"]
@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   #s.add_development_dependency 'sdoc-templates-42floors'
 
   # Runtime
-  s.add_runtime_dependency 'resque', '~> 1.25'
+  s.add_runtime_dependency 'resque'
 end
