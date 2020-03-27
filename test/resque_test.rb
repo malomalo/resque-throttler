@@ -58,6 +58,19 @@ class ResqueTest < Minitest::Test
     Resque.pop('myqueue')
   end
 
+  test "Resque::pop does not gc the limit data if killswitched" do
+    begin
+      Resque.perform_inline_rate_limit_gc = false
+      Resque.rate_limit(:myqueue, :at => 10, :per => 1)
+      Resque.expects(:queue_at_or_over_rate_limit?).with("myqueue").returns(true)
+      Resque.expects(:gc_rate_limit_data_for_queue).with("myqueue").never
+
+      Resque.pop('myqueue')
+    ensure
+      Resque.perform_inline_rate_limit_gc = true
+    end
+  end
+
   test "Resque::gc_rate_limit_data_for_queue" do
     Resque.rate_limit(:myqueue, :at => 10, :per => 5)
     @redis.expects(:smembers).with("throttler:myqueue_uuids").returns(["1","2","3"]).once
