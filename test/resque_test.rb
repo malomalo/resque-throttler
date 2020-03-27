@@ -73,18 +73,22 @@ class ResqueTest < Minitest::Test
 
   test "Resque::gc_rate_limit_data_for_queue" do
     Resque.rate_limit(:myqueue, :at => 10, :per => 5, :max_duration => 300)
-    @redis.expects(:smembers).with("throttler:myqueue_uuids").returns(["1","2","3","4"]).once
+    @redis.expects(:smembers).with("throttler:myqueue_uuids").returns(["1","2","3","4","5"]).once
     @redis.expects(:srem).with("throttler:myqueue_uuids", "1").once
     @redis.expects(:del).with("throttler:jobs:1").once
 
     @redis.expects(:srem).with("throttler:myqueue_uuids", "4").once
     @redis.expects(:del).with("throttler:jobs:4").once
 
+    @redis.expects(:srem).with("throttler:myqueue_uuids", "5").once
+    @redis.expects(:del).with("throttler:jobs:5").once
+
     travel_to Time.now do
       @redis.expects(:hgetall).with("throttler:jobs:1").returns({ 'started_at' => Time.now - 20, 'ended_at' => Time.now - 10 })
       @redis.expects(:hgetall).with("throttler:jobs:2").returns({ 'started_at' => Time.now - 20, 'ended_at' => Time.now - 3 })
       @redis.expects(:hgetall).with("throttler:jobs:3").returns({ 'started_at' => Time.now - 20, 'ended_at' => nil })
       @redis.expects(:hgetall).with("throttler:jobs:4").returns({ 'started_at' => Time.now - 310, 'ended_at' => nil })
+      @redis.expects(:hgetall).with("throttler:jobs:5").returns({})
 
       Resque.gc_rate_limit_data_for_queue('myqueue')
     end
