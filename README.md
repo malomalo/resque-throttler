@@ -48,6 +48,11 @@ And execute the long-running rake task, similar to a resque worker:
 bundle exec rake resque:rate_limit_gc
 ```
 
+And in your initializer, shut off the inline gc
+```ruby
+Resque.perform_inline_rate_limit_gc = false
+```
+
 Similar Resque Plugins
 ----------------------
 
