@@ -29,8 +29,13 @@ module Resque::Plugins
     end
 
     def rate_limit(queue, options={})
-      if options.keys.sort != [:at, :per]
+      if [:at, :per].any? { |key| !options.keys.include? key }
         raise ArgumentError.new("Mising either :at or :per in options")
+      elsif !(options.keys - [:at, :per, :max_duration]).empty?
+        raise ArgumentError.new("Unknown rate limit keys #{(options.keys - [:at, :per, :max_duration]).join(', ')}")
+      end
+      if options.keys.sort != [:at, :per]
+
       end
 
       @rate_limits[queue.to_s] = options
@@ -64,10 +69,29 @@ module Resque::Plugins
       uuids = redis.smembers(queue_key)
 
       uuids.each do |uuid|
-        job_ended_at = redis.hmget("throttler:jobs:#{uuid}", "ended_at")[0]
-        if job_ended_at && Time.at(job_ended_at.to_i) < Time.now - limit[:per]
-          redis.srem(queue_key, uuid)
-          redis.del("throttler:jobs:#{uuid}")
+        job_hash = redis.hgetall("throttler:jobs:#{uuid}")
+
+        job_started_at = job_hash['started_at']
+        job_ended_at = job_hash['ended_at']
+
+        # Happy Path
+        gc_job = job_ended_at && Time.at(job_ended_at.to_i) < Time.now - limit[:per]
+
+        if job_hash.empty?
+          warn "[resque-throttler] job in #{queue} queue detected with empty rate limit hash"
+          gc_job = true
+        end
+
+        if limit[:max_duration] && job_started_at && Time.at(job_started_at.to_i) < Time.now - limit[:max_duration]
+          warn "[resque-throttler] job in #{queue} queue exceeded maxiumum duration"
+          gc_job = true
+        end
+
+        if gc_job
+          redis.multi do
+            redis.srem(queue_key, uuid)
+            redis.del("throttler:jobs:#{uuid}")
+          end
         end
       end
     end
