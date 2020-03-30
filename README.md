@@ -17,7 +17,7 @@ require 'resque/throttler'
 Or in a Gemfile:
 
 ```ruby
-gem 'resque-throttler', :require => 'resque/throttler'
+gem 'resque-throttler', require: 'resque/throttler'
 ```
 
 Usage
@@ -27,8 +27,30 @@ Usage
 require 'resque'
 require 'resque/throttler'
 
-# Rate limit at 10 jobs from `my_queue` per minute
-Resque.rate_limit(:my_queue, :at => 10, :per => 60)
+# Rate limit at 10 jobs from `my_queue` per minute, ignores jobs that have taken more than an hour
+Resque.rate_limit(:my_queue, at: 10, per: 60, job_timeout: 3600)
+```
+
+Centralized Garbage Collection
+-----
+
+With many resque proceses and large rate limits the amount of work maintaining the rate limit data
+in Redis can grow outside what should be performed by resque processes. In this case, a centralized
+rake task should be used to prevent resque worker slowdown and Redis CPU pressure.
+
+In your Rakefile, add:
+```
+require 'resque/throttler/tasks'
+```
+
+And execute the long-running rake task, similar to a resque worker:
+```bash
+bundle exec rake resque:rate_limit_gc
+```
+
+And in your initializer, shut off the inline gc
+```ruby
+Resque.perform_inline_rate_limit_gc = false
 ```
 
 Similar Resque Plugins
