@@ -28,7 +28,7 @@ require 'resque'
 require 'resque/throttler'
 
 # Rate limit at 10 jobs from `my_queue` per minute, ignores jobs that have taken more than an hour
-Resque.rate_limit(:my_queue, at: 10, per: 60, max_duration: 3600)
+Resque.rate_limit(:my_queue, at: 10, per: 60, job_timeout: 3600)
 ```
 
 Centralized Garbage Collection

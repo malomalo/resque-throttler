@@ -31,11 +31,8 @@ module Resque::Plugins
     def rate_limit(queue, options={})
       if [:at, :per].any? { |key| !options.keys.include? key }
         raise ArgumentError.new("Mising either :at or :per in options")
-      elsif !(options.keys - [:at, :per, :max_duration]).empty?
-        raise ArgumentError.new("Unknown rate limit keys #{(options.keys - [:at, :per, :max_duration]).join(', ')}")
-      end
-      if options.keys.sort != [:at, :per]
-
+      elsif !(options.keys - [:at, :per, :job_timeout]).empty?
+        raise ArgumentError.new("Unknown rate limit keys #{(options.keys - [:at, :per, :job_timeout]).join(', ')}")
       end
 
       @rate_limits[queue.to_s] = options
@@ -82,8 +79,8 @@ module Resque::Plugins
           gc_job = true
         end
 
-        if limit[:max_duration] && job_started_at && Time.at(job_started_at.to_i) < Time.now - limit[:max_duration]
-          warn "[resque-throttler] job in #{queue} queue exceeded maxiumum duration"
+        if limit[:job_timeout] && job_started_at && Time.at(job_started_at.to_i) < Time.now - limit[:job_timeout]
+          warn "[resque-throttler] job in #{queue} queue exceeded job timeout"
           gc_job = true
         end
 

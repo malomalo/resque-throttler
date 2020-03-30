@@ -72,7 +72,7 @@ class ResqueTest < Minitest::Test
   end
 
   test "Resque::gc_rate_limit_data_for_queue" do
-    Resque.rate_limit(:myqueue, :at => 10, :per => 5, :max_duration => 300)
+    Resque.rate_limit(:myqueue, :at => 10, :per => 5, :job_timeout => 300)
     @redis.expects(:smembers).with("throttler:myqueue_uuids").returns(["1","2","3","4","5"]).once
     @redis.expects(:srem).with("throttler:myqueue_uuids", "1").once
     @redis.expects(:del).with("throttler:jobs:1").once
