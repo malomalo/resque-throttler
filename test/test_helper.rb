@@ -10,12 +10,8 @@ require 'resque'
 require 'resque/throttler'
 require "minitest/autorun"
 require 'minitest/unit'
-require 'minitest/reporters'
-require "mocha"
-require "mocha/mini_test"
+require 'mocha/minitest'
 require 'active_support/testing/time_helpers'
-
-Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
 # File 'lib/active_support/testing/declarative.rb', somewhere in rails....
 class Minitest::Test

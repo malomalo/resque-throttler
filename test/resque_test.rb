@@ -34,7 +34,7 @@ class ResqueTest < Minitest::Test
   end
 
   test "Resque::pop pops on unthrottled queues" do
-    Resque.redis.expects(:lpop).returns(nil)
+    Resque.redis.expects(:pop_from_queue).returns(nil)
     
     Resque.pop('myqueue')
   end
