@@ -14,18 +14,18 @@ Gem::Specification.new do |s|
   s.extensions    = []
   s.require_paths = ["lib"]
   #s.extra_rdoc_files = ["LICENSE", "README.md"]
-  
-  # Developoment 
+
+  # Developoment
   s.add_development_dependency 'rake'
   #s.add_development_dependency 'rdoc'
   #s.add_development_dependency 'sdoc'
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'activesupport'
   s.add_development_dependency 'minitest'
-  s.add_development_dependency 'minitest-reporters'
+  s.add_development_dependency 'minitest-ci'
   s.add_development_dependency 'mocha'
   #s.add_development_dependency 'sdoc-templates-42floors'
 
   # Runtime
-  s.add_runtime_dependency 'resque', '~> 1.25'
+  s.add_runtime_dependency 'resque'
 end
