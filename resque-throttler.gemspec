@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   #s.add_development_dependency 'sdoc-templates-42floors'
 
   # Runtime
-  s.add_runtime_dependency 'resque', '~> 1.25'
+  s.add_runtime_dependency 'resque', '>= 1.25'
 end
