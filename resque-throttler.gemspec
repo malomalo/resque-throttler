@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "resque-throttler"
-  s.version     = '0.1.5'
+  s.version     = '0.1.6'
   s.licenses    = ['MIT']
   s.authors     = ["Jon Bracy"]
   s.email       = ["jonbracy@gmail.com"]
